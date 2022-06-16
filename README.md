@@ -43,9 +43,11 @@ npm run dev # start up frontend and backend
 
 ### Starting up client
 
-There is a python-based client (`client.py`) and C++ based client (`client.cpp`) (WIP).
+There is a python-based client (`client.py`) and C++ based client (`cpp-client/client.cpp`) (WIP).
 
 #### Python
+
+##### Setup
 
 Edit the config vars in the python script (`client.py`).
 
@@ -62,9 +64,38 @@ arcade_address = "mszsUNneHjsR4s7jqHkrVZBS8DY2PL1tPpz" # must be static
 
 Make any changes to python script to support your current setup.
 
+##### Running
+
+```bash
+python client.py
+```
+
 #### C++
 
-TODO
+NOTE: Linux support only (for now)
+##### Setup
+
+Edit the config vars in the C++ code (`cpp-client/client.cpp`).
+
+**NOTE: These values will be overridden if found from database.**
+
+Example config vars:
+
+```cpp
+// Config
+double arcade_cost = 5.0; // default value
+std::string arcade_name = "Arcade Test #2"; // default value
+std::string arcade_address = "mszsUNneHjsR4s7jqHkrVZBS8DY2PL1tPp"; // must be static
+```
+
+Make any changes to C++ code to support your current setup.
+
+##### Running
+
+```bash
+npm run test-cpp # testing
+
+```
 
 ## Using the frontend
 

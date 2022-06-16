@@ -87,9 +87,13 @@ sock.on('message', (topic, message) => {
 // WS
 wss.on("connection", (ws, req) => {
     console.log(`[WS] ${req.socket.remoteAddress} has connected...`);
-
-    ws.on("message", data => {
-        var message = JSON.parse(data)
+    ws.on("message", data => {      
+        try {
+            var message = JSON.parse(data)
+        } catch (e) {
+            console.log("[WS] Invalid message was sent! Raw data: " + data)
+            return;
+        }
         if(message.action != null && message.data != null) {
             var info = message.data
             switch (message.action) {
@@ -151,7 +155,7 @@ wss.on("connection", (ws, req) => {
                     console.log("[WS] Unknown action: " + message.action)
                     break;
             }
-        } else console.log("[WS] Invalid message was sent! Raw data: " + data)
+        } else console.log("[WS] Invalid JSON was sent! Raw data: " + data)
     });
 
     ws.on("close", () => {
