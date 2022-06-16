@@ -1,11 +1,11 @@
 # Dogecoin Arcade Full-stack
 
-**NOTE: This is a work-in-progress and not ready for PRODUCTION!**
-**Repo subject to CHANGE!**
+NOTE: This is a **work-in-progress** and not ready for PRODUCTION!
+Repo subject to **CHANGE**!
 
 ## How to run
 
-**NOTE: The dev server runs the database in memory, so all data will be LOST when server is restarted.**
+NOTE: The dev server runs the database in memory, so all data will be **LOST** when server is restarted.
 
 ### Starting up dogecoind
 
@@ -43,7 +43,7 @@ npm run dev # start up frontend and backend
 
 ### Starting up client
 
-There is python-based client and C++ based client (WIP).
+There is a python-based client (`client.py`) and C++ based client (`client.cpp`) (WIP).
 
 #### Python
 
@@ -61,6 +61,10 @@ arcade_address = "mszsUNneHjsR4s7jqHkrVZBS8DY2PL1tPpz" # must be static
 ```
 
 Make any changes to python script to support your current setup.
+
+#### C++
+
+TODO
 
 ## Using the frontend
 
