@@ -1,0 +1,15 @@
+/* Write your global styles here, in PostCSS syntax */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tabs */
+.svelte-tabs li.svelte-tabs__tab {
+    outline-style: none;
+    color: darkgray;
+}
+
+.svelte-tabs li.svelte-tabs__selected {
+    outline-style: none;
+    color: white;
+}

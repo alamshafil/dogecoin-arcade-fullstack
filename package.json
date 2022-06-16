@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "client-server": "cd client-server && npm start",
+    "frontend-server-dev": "cd frontend-server && npm run dev",
+    "install-deps": "cd client-server && npm install && cd .. && cd frontend-server && npm install && cd .. && echo Done.",
+    "dev": "concurrently -n \"backend,frontend\" -c \"bgBlue,bgGreen\" --kill-others \"npm run client-server\" \"npm run frontend-server-dev\""
+    },
+  "devDependencies": {
+    "concurrently": "^7.2.2"
+  }
+}
