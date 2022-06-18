@@ -109,7 +109,6 @@ void handle_message(const std::string& message)
     } else {
         print("--- WARNING: Unknown data was sent. ---");
     }
-    // if (message == "") { ws->close(); }
 }
 
 int main() {
@@ -124,14 +123,15 @@ int main() {
     data["timestamp"] = std::time(nullptr);
     obj["data"] = data;
 
-    // TODO: Fix SEGFAULT
+    if(ws == NULL) return 0;
+
     ws->send((std::string)obj);
 
     while (ws->getReadyState() != WebSocket::CLOSED) {
         ws->poll();
         ws->dispatch(handle_message);
     }
-    
+
     // TODO: Handle CTRL-C (SIGINT)
     delete ws;
 
