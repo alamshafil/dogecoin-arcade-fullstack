@@ -35,16 +35,18 @@ const mongod = await MongoMemoryServer.create({
 const uri = mongod.getUri();
 console.log(`[MongoDB] URI: ${uri}`)
 
-// The Server can be stopped again with
-// await mongod.stop();
-
 // Set up WS
 const wss = new WebSocketServer({ port: WEBSOCKET_PORT })
 console.log(`[WS] Websocket server is running at port ${WEBSOCKET_PORT}...`)
 
 // Set up RPC
-var rpc = new RpcClient(rpc_config); // TODO: Check if RPC is up.
-console.log("[RPC] Connected to Doge RPC...")
+var rpc = new RpcClient(rpc_config); 
+
+// Check if RPC is up
+rpc.help(err => { 
+    if(err) console.error("[RPC] " + err)
+    else console.log("[RPC] Connected to Doge RPC...")
+})
 
 // Set up ZMQ
 var sock = zmq.socket('sub')
@@ -67,6 +69,7 @@ db.once("open", function () {
 // ZMQ
 sock.on('message', (topic, message) => {
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
+        if(err) console.error("[RPC] " + err)
         var tx = resp.result
         var hash = tx.txid
         var from = tx.details[0].address
