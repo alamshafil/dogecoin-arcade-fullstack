@@ -9,6 +9,11 @@ import zmq from 'zeromq'
 import RpcClient from 'bitcoind-rpc'
 import { WebSocketServer } from 'ws'
 
+// Logging imports
+import 'console-error'
+import 'console-warn'
+import 'console-info'
+
 // Ports
 const ZMQ_PORT = 9000
 const WEBSOCKET_PORT = 7000
