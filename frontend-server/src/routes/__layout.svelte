@@ -47,6 +47,7 @@
           <a href="/arcades" class="btn btn-ghost normal-case"><Fa icon={faGamepad} fw/> Arcade Machines</a>
         </ul>
       </div>
+      <!-- User dropdown -->
       <div class="dropdown dropdown-end">
         <span tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
@@ -73,6 +74,7 @@
     <ul class="menu p-4 overflow-y-auto w-80 bg-base-100">
       <!-- Sidebar content -->
       <li><a href="/user">Home</a></li>
+      <li><a href="/user">Users</a></li>
       <li><a href="/arcades">Arcade Machines</a></li>
     </ul>
   </div>

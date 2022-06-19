@@ -3,9 +3,11 @@
 <script>
     import History from '$lib/History.svelte';
     import Fa from 'svelte-fa/src/fa.svelte'
-    import { faSearch } from '@fortawesome/free-solid-svg-icons'
+    import { faSearch, faWarning } from '@fortawesome/free-solid-svg-icons'
     import { browser } from '$app/env';
     
+    let error = ''
+
     let dogecoinAddr = '';
 
     let historySearch = '';
@@ -35,12 +37,14 @@
         playHistory = jsonRes.arcadeHistory;
     }
 
-    function logIn() {
-        getHistory()
-        getPlayHistory()
-        if(dogecoinAddr != '' || dogecoinAddr != undefined) {
+    function logIn() {dogecoinAddr != undefined
+        if(dogecoinAddr != '' || (dogecoinAddr != undefined && dogecoinAddr != '')) {
             if(browser) localStorage["dogecoin_addr"] = dogecoinAddr
+            getHistory()
+            getPlayHistory()
             showUser = true
+        } else {
+            error = "Address can't be empty!"
         }
     }
 
@@ -67,7 +71,7 @@
 </script>
 
 {#if !showUser}
-<div class="hero min-h-screen bg-base-200">
+<div class="hero h-screen bg-base-200">
     <div class="hero-content flex-col lg:flex-row-reverse">
         <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <div class="card-body">
@@ -75,6 +79,11 @@
                     <label class="label" for="address-input">
                         <span class="label-text">Dogecoin Address</span>
                     </label>
+                    {#if error != ""}
+                    <div class="alert alert-error shadow-lg mb-4">
+                        <span><Fa icon={faWarning} fw/> {error}</span>
+                    </div>
+                    {/if}
                     <input
                         bind:value={dogecoinAddr}
                         type="text"
@@ -83,14 +92,14 @@
                     />
                 </div>
                 <div class="form-control mt-6">
-                    <button on:click={logIn} class="btn btn-primary">Login</button>
+                    <button on:click={logIn} class="btn btn-primary">View user</button>
                 </div>
             </div>
         </div> 
         <div class="text-center lg:text-left">
-            <h1 class="text-5xl font-bold">Login now!</h1>
+            <h1 class="text-5xl font-bold">View user data</h1>
             <p class="py-6">
-                View your stats, infomation, and many more just by using your wallet address!
+                View address stats, infomation, and many more by using a wallet address.
             </p>
         </div>
     </div>
