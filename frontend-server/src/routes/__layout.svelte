@@ -2,6 +2,8 @@
 
 <script>
   import "../app.css";
+  import Fa from 'svelte-fa/src/fa.svelte'
+  import { faHome, faGamepad, faUser, faCogs, faPaintBrush, faClose } from '@fortawesome/free-solid-svg-icons'
 
   let name = "Dogecoin Arcade"
 </script>
@@ -40,8 +42,26 @@
       <div class="flex-none hidden lg:block">
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content -->
-          <a href="/user" class="btn btn-ghost normal-case">User Home</a>
-          <a href="/arcades" class="btn btn-ghost normal-case">Arcade Machines</a>
+          <a href="/" class="btn btn-ghost normal-case"><Fa icon={faHome} fw/> Home</a>
+          <a href="/user" class="btn btn-ghost normal-case"><Fa icon={faUser} fw/> Users</a>
+          <a href="/arcades" class="btn btn-ghost normal-case"><Fa icon={faGamepad} fw/> Arcade Machines</a>
+        </ul>
+      </div>
+      <div class="dropdown dropdown-end">
+        <span tabindex="0" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full">
+            <img src="img/dogecoin.png" alt="User" />
+          </div>
+        </span>
+        <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow-xl bg-base-100 rounded-box w-52">
+          <li>
+            <div class="justify-between">
+              <Fa icon={faPaintBrush} fw/> Dashboard
+              <span class="badge">New</span>
+            </div>
+          </li>
+          <li><a href="/"><Fa icon={faCogs} fw/> Settings</a></li>
+          <li><a href="/"><Fa icon={faClose} fw/> Logout</a></li>
         </ul>
       </div>
     </div>
@@ -52,7 +72,7 @@
     <label for="drawer-main" class="drawer-overlay" />
     <ul class="menu p-4 overflow-y-auto w-80 bg-base-100">
       <!-- Sidebar content -->
-      <li><a href="/user">User Home</a></li>
+      <li><a href="/user">Home</a></li>
       <li><a href="/arcades">Arcade Machines</a></li>
     </ul>
   </div>
