@@ -40,7 +40,7 @@
       <div class="flex-none hidden lg:block">
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content -->
-          <a href="/" class="btn btn-ghost normal-case">Dashboard</a>
+          <a href="/user" class="btn btn-ghost normal-case">User Home</a>
           <a href="/arcades" class="btn btn-ghost normal-case">Arcade Machines</a>
         </ul>
       </div>
@@ -52,7 +52,7 @@
     <label for="drawer-main" class="drawer-overlay" />
     <ul class="menu p-4 overflow-y-auto w-80 bg-base-100">
       <!-- Sidebar content -->
-      <li><a href="/">Dashboard</a></li>
+      <li><a href="/user">User Home</a></li>
       <li><a href="/arcades">Arcade Machines</a></li>
     </ul>
   </div>
