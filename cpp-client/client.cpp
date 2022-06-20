@@ -83,7 +83,7 @@ void handle_message(const std::string& message)
                         playObj["action"] = "play_game";
                         json::jobject dataObj;
                         dataObj["from"] = from;
-                        dataObj["value"] = value;
+                        dataObj["value"] = balance;
                         dataObj["timestamp"] = timestamp;
                         dataObj["arcade_name"] = arcade_name;
                         dataObj["arcade_address"] = arcade_address;
