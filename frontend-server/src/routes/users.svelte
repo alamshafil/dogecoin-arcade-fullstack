@@ -9,10 +9,9 @@
 </script>
 
 <script>
-    import Circle from "$lib/Circle.svelte";
     import History from "$lib/History.svelte";
     import Fa from 'svelte-fa/src/fa.svelte'
-    import { faPlus, faHistory, faEdit, faClose, faSearch, faCloudUpload } from '@fortawesome/free-solid-svg-icons'
+    import { faHistory, faEdit, faClose, faSearch } from '@fortawesome/free-solid-svg-icons'
     import { Tabs, Tab, TabList, TabPanel } from 'svelte-tabs';
 
     export let users;
@@ -43,12 +42,6 @@
         || history.value.toString().includes(historySearch)
     })
 
-    function parseTime(timestamp) {
-        if(timestamp <= -1) return 'Never seen'
-        var date = new Date(timestamp*1000)
-        return date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString("en-US")
-    }
-
     async function fetchUsers() {
         const res = await fetch("/api/users");
         const jsonRes = await res.json();
@@ -59,7 +52,7 @@
         const res = await fetch("/api/history/payment/user/" + addr);
         const jsonRes = await res.json();
         arcadeHistory = jsonRes.arcadeHistory;
-        getPlayHistory()
+        getPlayHistory(addr)
     }
 
     async function getPlayHistory(addr) {
