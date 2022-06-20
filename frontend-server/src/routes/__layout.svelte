@@ -2,6 +2,7 @@
 
 <script>
   import "../app.css";
+  import DogePrice from "$lib/DogePrice.svelte";
   import Fa from 'svelte-fa/src/fa.svelte'
   import { faHome, faGamepad, faUser, faCogs, faPaintBrush, faClose } from '@fortawesome/free-solid-svg-icons'
 
@@ -38,6 +39,7 @@
           <img src="/img/arcade.png" alt="Logo" />
         </div>
         <a href="/" class="btn btn-ghost normal-case text-xl">{name}</a>
+        <DogePrice />
       </div>
       <div class="flex-none hidden lg:block">
         <ul class="menu menu-horizontal">
