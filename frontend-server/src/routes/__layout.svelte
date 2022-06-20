@@ -35,7 +35,7 @@
       </div>
       <div class="flex-1 px-2 mx-2">
         <div class="w-10">
-          <img src="/img/dogecoin.png" alt="Logo" />
+          <img src="/img/arcade.png" alt="Logo" />
         </div>
         <a href="/" class="btn btn-ghost normal-case text-xl">{name}</a>
       </div>
