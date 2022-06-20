@@ -45,7 +45,7 @@
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content -->
           <a href="/" class="btn btn-ghost normal-case"><Fa icon={faHome} fw/> Home</a>
-          <a href="/user" class="btn btn-ghost normal-case"><Fa icon={faUser} fw/> Users</a>
+          <a href="/users" class="btn btn-ghost normal-case"><Fa icon={faUser} fw/> Users</a>
           <a href="/arcades" class="btn btn-ghost normal-case"><Fa icon={faGamepad} fw/> Arcade Machines</a>
         </ul>
       </div>
@@ -75,8 +75,8 @@
     <label for="drawer-main" class="drawer-overlay" />
     <ul class="menu p-4 overflow-y-auto w-80 bg-base-100">
       <!-- Sidebar content -->
-      <li><a href="/user">Home</a></li>
-      <li><a href="/user">Users</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/users">Users</a></li>
       <li><a href="/arcades">Arcade Machines</a></li>
     </ul>
   </div>
