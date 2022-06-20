@@ -48,7 +48,7 @@
         </ul>
       </div>
       <!-- User dropdown -->
-      <div class="dropdown dropdown-end">
+      <!-- <div class="dropdown dropdown-end">
         <span tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
             <img src="img/dogecoin.png" alt="User" />
@@ -64,7 +64,7 @@
           <li><a href="/"><Fa icon={faCogs} fw/> Settings</a></li>
           <li><a href="/"><Fa icon={faClose} fw/> Logout</a></li>
         </ul>
-      </div>
+      </div> -->
     </div>
     <!-- Page content -->
     <slot />
