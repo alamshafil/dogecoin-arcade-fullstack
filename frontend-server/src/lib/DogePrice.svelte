@@ -2,6 +2,7 @@
 <!-- Based on CoinGecko API -->
 
 <script>
+	import { doge_price } from '$lib/stores.js';
 
     const coin = 'dogecoin'
     const curreny = 'USD'
@@ -11,6 +12,7 @@
 
     async function fetchPrice() {
         price = await fetch(url).then((e) => e.json());
+        doge_price.update(p => price.dogecoin.usd);
     }
     fetchPrice();
 </script>
