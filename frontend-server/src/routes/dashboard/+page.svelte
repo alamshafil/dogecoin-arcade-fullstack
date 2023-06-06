@@ -1,33 +1,10 @@
 <!-- Copyright (c) 2022 Shafil Alam -->
-<script context="module">
-    export async function load({ fetch }) {
-        const res_all = await fetch("/api/sum/coins/all");
-        const jsonRes_all = await res_all.json();
-
-        const res_arcades = await fetch("/api/sum/coins/arcades");
-        const jsonRes_arcades = await res_arcades.json();
-
-        const res_status = await fetch("/api/arcades/status");
-        const jsonRes_status = await res_status.json();
-
-        return {
-            props: {
-                totalSum: jsonRes_all.totalValue[0],
-                arcadeSums: jsonRes_arcades.totalValues,
-                arcadeStatus: jsonRes_status.arcadeStatus[0],
-            },
-        };
-    }
-</script>
-
 <script>
+    export let data;
+
     import Fa from "svelte-fa/src/fa.svelte";
     import { faWarning, faCoins, faGamepad } from "@fortawesome/free-solid-svg-icons";
     import { doge_price } from "$lib/stores";
-
-    export let arcadeStatus;
-    export let totalSum;
-    export let arcadeSums;
 
     let price;
 
@@ -43,9 +20,9 @@
                 <Fa icon={faCoins} fw size="4x" />
             </div>
             <div class="stat-title">Total DOGE</div>
-            {#if totalSum != undefined}
-                <div class="stat-value">{totalSum.sum} DOGE</div>
-                <div class="stat-desc">{totalSum.sum} DOGE = ${(price*totalSum.sum).toFixed(2)}</div>
+            {#if data.totalSum != undefined}
+                <div class="stat-value">{data.totalSum.sum} DOGE</div>
+                <div class="stat-desc">{data.totalSum.sum} DOGE = ${(price*data.totalSum.sum).toFixed(2)}</div>
             {:else}
                 <div class="stat-value">0 DOGE</div>
                 <div class="stat-desc">0 DOGE = $0.00</div>
@@ -57,8 +34,8 @@
                 <Fa icon={faGamepad} fw size="4x" />
             </div>
             <div class="stat-title">Online arcade machines</div>
-            {#if arcadeStatus != undefined}
-                <div class="stat-value">{arcadeStatus.online} online</div>
+            {#if data.arcadeStatus != undefined}
+                <div class="stat-value">{data.arcadeStatus.online} online</div>
             {:else}
                 <div class="stat-value">0 online</div>
             {/if}
@@ -69,8 +46,8 @@
                 <Fa icon={faWarning} fw size="4x" />
             </div>
             <div class="stat-title">Offline arcade machines</div>
-            {#if arcadeStatus != undefined}
-                <div class="stat-value">{arcadeStatus.offline} offline</div>
+            {#if data.arcadeStatus != undefined}
+                <div class="stat-value">{data.arcadeStatus.offline} offline</div>
             {:else}
                 <div class="stat-value">0 offline</div>
             {/if}
@@ -79,8 +56,8 @@
 
     <h1 class="font-bold text-xl mb-4">Arcade Machines</h1>
     <div class="space-y-4">
-        {#if arcadeSums.length != 0}
-            {#each arcadeSums as arcade}
+        {#if data.arcadeSums.length != 0}
+            {#each data.arcadeSums as arcade}
                 <div class="alert shadow-lg">
                     <div>
                         <div class="w-8 ml-4">

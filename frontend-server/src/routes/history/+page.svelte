@@ -1,13 +1,5 @@
-<script context="module">
-    export async function load({ fetch }) {
-        const res = await fetch("/api/history");
-        const jsonRes = await res.json();
-        return { props: { arcadeHistory: jsonRes.arcadeHistory } };
-    }
-</script>
-
 <script>
-    export let arcadeHistory;
+    export let data;
 
     async function fetchMachines() {
         const res = await fetch("/api/history");
@@ -31,7 +23,7 @@
     </div>
 
     <div class="flex flex-col space-y-4">
-        {#each arcadeHistory as history}
+        {#each data.arcadeHistory as history}
             <div class="alert shadow-lg">
                 <div>
                     <div class="w-10 ml-4">

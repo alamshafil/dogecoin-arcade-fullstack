@@ -1,20 +1,13 @@
 <!-- Copyright (c) 2022 Shafil Alam -->
 
-<script context="module">
-    export async function load({ fetch }) {
-        const res = await fetch("/api/users");
-        const jsonRes = await res.json();
-        return { props: { users: jsonRes.addresses } };
-    }
-</script>
-
 <script>
+    export let data;
+
     import History from "$lib/History.svelte";
     import Fa from 'svelte-fa/src/fa.svelte'
     import { faHistory, faEdit, faClose, faSearch } from '@fortawesome/free-solid-svg-icons'
     import { Tabs, Tab, TabList, TabPanel } from 'svelte-tabs';
 
-    export let users;
     let filteredUsers;
 
     let arcadeHistory = [];
@@ -26,7 +19,7 @@
     let userSearch = "";
     let historySearch = "";
 
-    $: filteredUsers = users.filter((user) => {
+    $: filteredUsers = data.users.filter((user) => {
         return user.includes(userSearch)
     })
 
@@ -96,7 +89,7 @@
                 </div>
             </div>
         {/each}
-        {#if users.length == 0}
+        {#if data.users.length == 0}
             <p class="mt-10 text-xs text-center">No users were found.</p>
         {/if}
     </div>

@@ -109,7 +109,7 @@
     <div class="flex flex-col space-y-4 mt-5">
         <div class="navbar bg-base-100">
             <div class="flex-1">
-                <h3 class="text-xl text-xs md:text-base">Payment history for {dogecoinAddr}</h3>
+                <h3 class="text-xl md:text-base">Payment history for {dogecoinAddr}</h3>
             </div>
             <div class="flex-none">
                 <ul class="menu menu-horizontal p-0">
@@ -134,7 +134,7 @@
     <div class="flex flex-col space-y-4 mt-5">
         <div class="navbar bg-base-100">
             <div class="flex-1">
-                <h3 class="text-xl text-xs md:text-base">Game history for {dogecoinAddr}</h3>
+                <h3 class="text-xl md:text-base">Game history for {dogecoinAddr}</h3>
             </div>
             <div class="flex-none">
                 <ul class="menu menu-horizontal p-0">

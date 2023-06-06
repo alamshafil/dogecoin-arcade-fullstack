@@ -1,21 +1,14 @@
 <!-- Copyright (c) 2022 Shafil Alam -->
 
-<script context="module">
-    export async function load({ fetch }) {
-        const res = await fetch("/api/arcades");
-        const jsonRes = await res.json();
-        return { props: { arcadeMachines: jsonRes.arcadeMachines } };
-    }
-</script>
-
 <script>
+    export let data;
+
     import Circle from "$lib/Circle.svelte";
     import History from "$lib/History.svelte";
     import Fa from 'svelte-fa/src/fa.svelte'
     import { faPlus, faHistory, faEdit, faClose, faSearch, faCloudUpload } from '@fortawesome/free-solid-svg-icons'
     import { Tabs, Tab, TabList, TabPanel } from 'svelte-tabs';
 
-    export let arcadeMachines;
     let filteredMachines;
 
     let arcadeHistory = [];
@@ -32,7 +25,7 @@
     let machineSearch = "";
     let historySearch = "";
 
-    $: filteredMachines = arcadeMachines.filter((machine) => {
+    $: filteredMachines = data.arcadeMachines.filter((machine) => {
         return machine.name.toLowerCase().includes(machineSearch.toLowerCase()) 
         || machine.address.includes(machineSearch)
         || machine.cost.toString().includes(machineSearch)
@@ -173,7 +166,7 @@
                 </div>
             </div>
         {/each}
-        {#if arcadeMachines.length == 0}
+        {#if data.arcadeMachines.length == 0}
             <p class="mt-10 text-xs text-center">No arcade machines were found.</p>
         {/if}
     </div>
