@@ -43,13 +43,13 @@ npm run dev # start up frontend and backend
 
 ### Starting up client
 
-There is a python-based client (`client.py`) and C++ based client (`cpp-client/client.cpp`) (WIP).
+There is a python-based client (`clients/python/client.py`) and C++ based client (`clients/cpp/client.cpp`) (WIP).
 
 #### Python
 
 ##### Setup
 
-Edit the config vars in the python script (`client.py`).
+Edit the config vars in the python script (`clients/python/client.py`).
 
 **NOTE: These values will be overridden if found from database.**
 
@@ -67,7 +67,7 @@ Make any changes to python script to support your current setup.
 ##### Running
 
 ```bash
-python client.py
+python clients/python/client.py
 ```
 
 #### C++
@@ -75,7 +75,7 @@ python client.py
 NOTE: Linux support only (for now)
 ##### Setup
 
-Edit the config vars in the C++ code (`cpp-client/client.cpp`).
+Edit the config vars in the C++ code (`clients/cpp/client.cpp`).
 
 **NOTE: These values will be overridden if found from database.**
 

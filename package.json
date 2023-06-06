@@ -3,7 +3,7 @@
     "client-server": "cd client-server && npm start",
     "frontend-server-dev": "cd frontend-server && npm run dev",
     "install-deps": "cd client-server && npm install && cd .. && cd frontend-server && npm install && cd .. && echo Done.",
-    "test-cpp": "cd cpp-client && g++ client.cpp -o client && ./client && rm client && cd ..",
+    "test-cpp": "cd clients/cpp && g++ client.cpp -o client && ./client && rm client && cd ../..",
     "dev": "concurrently -n \"backend,frontend\" -c \"bgBlue,bgGreen\" --kill-others \"npm run client-server\" \"npm run frontend-server-dev\""
   },
   "devDependencies": {
