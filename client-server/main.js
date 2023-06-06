@@ -134,34 +134,33 @@ wss.on("connection", (ws, req) => {
                             online: false,
                             timestamp: info.timestamp
                         }
-                    }, {}, function (err, docs) {
-                        if (err) console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`)
-                        else console.info(`[DB] Saved machine '${info.arcade_name}' status to offline at ${info.timestamp}`)
-                    });
+                    }, {})
+                    .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to offline at ${info.timestamp}`))
+                    .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
                     break;
                 case "join":
                     console.info(`[WS] Arcade machine '${info.arcade_name}' has joined.`)
-                    Arcade.find({ address: info.arcade_address }, function (err, machines) {
-                        // Send cost data to machine
-                        console.info(`[WS] Sending infomation from DB to machine '${info.arcade_name}'`)
-                        if (err || machines.length == 0) {
-                            var json = { action: "cost", data: { arcade_name: info.arcade_name, arcade_address: info.arcade_address, cost: "Error", name: "Error" } }
-                            ws.send(JSON.stringify(json))
-                        } else {
+                    Arcade.find({ address: info.arcade_address })
+                        .then(machines => {
+                            // Send cost data to machine
+                            console.info(`[WS] Sending infomation from DB to machine '${info.arcade_name}'`)
                             var json = { action: "cost", data: { arcade_name: info.arcade_name, arcade_address: info.arcade_address, cost: machines[0].cost, name: machines[0].name } }
                             ws.send(JSON.stringify(json))
-                        }
-                    });
+                        })
+                        .catch(err => {
+                            console.info(`[WS] Error sending infomation from DB to machine '${info.arcade_name}.' Error: ${err}`)
+                            var json = { action: "cost", data: { arcade_name: info.arcade_name, arcade_address: info.arcade_address, cost: "Error", name: "Error" } }
+                            ws.send(JSON.stringify(json))
+                        });
                     // Add status to DB
                     Arcade.findOneAndUpdate({ address: info.arcade_address }, {
                         status: {
                             online: true,
                             timestamp: info.timestamp
                         }
-                    }, {}, function (err, docs) {
-                        if (err) console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`)
-                        else console.info(`[DB] Saved machine '${info.arcade_name}' status to online at ${info.timestamp}`)
-                    });
+                    }, {})
+                    .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to online at ${info.timestamp}`))
+                    .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
                     break;
                 default:
                     console.error("[WS] Unknown action: " + message.action)
