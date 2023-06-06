@@ -7,7 +7,7 @@ Repo subject to **CHANGE**!
 
 NOTE: The dev server runs the database in memory, so all data will be **LOST** when server is restarted.
 
-### Starting up dogecoind
+### Setting up client-server and dogecoind
 
 Set up the client-server config by copying `env.sample` to `.env` and changing the values based on how `dogecoind` is setup.
 

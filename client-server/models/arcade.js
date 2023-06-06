@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Shafil Alam
+// Copyright (c) 2022-2023 Shafil Alam
 
 import mongoose from 'mongoose';
 
@@ -7,14 +7,13 @@ const ArcadeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  address: {
+  id: {
     type: String,
     required: true,
-    default: 0,
   },
   cost: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
   status: {
     online: {
@@ -24,7 +23,7 @@ const ArcadeSchema = new mongoose.Schema({
       type: Number
     }
   }
-}, {collection : 'arcade-machines'});
+}, { collection: 'arcade-machines' });
 
 const Arcade = mongoose.model("Arcade", ArcadeSchema);
 

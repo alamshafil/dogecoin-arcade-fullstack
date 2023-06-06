@@ -49,11 +49,12 @@ export async function PUT({ params, request }) {
         const collection = db.collection('arcade-machines')
 
         const machine = await request.json()
-        await collection.updateOne({ _id: ObjectId(machine.id) }, {
+        await collection.updateOne({ _id: ObjectId(machine.dbID) }, {
             $set: {
                 name: machine.name,
                 address: machine.address,
-                cost: machine.cost
+                cost: machine.cost,
+                id: machine.id,
             }
         })
 

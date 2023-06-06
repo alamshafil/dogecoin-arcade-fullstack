@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Shafil Alam
+// Copyright (c) 2022-2023 Shafil Alam
 
 // Import env file
 import 'dotenv/config'
@@ -134,46 +134,41 @@ wss.on("connection", (ws, req) => {
             var info = message.data
             switch (message.action) {
                 case "paid":
-                    console.info(`[WS] Got ${message.action} where ${info.from} sent ${info.value} DOGE to machine '${info.arcade_name}'`)
-                    const arcadeHistory = new ArcadeHistory({ from: info.from, value: info.value, arcade_name: info.arcade_name, arcade_address: info.arcade_address, tx: info.tx, timestamp: info.timestamp })
-                    try {
-                        arcadeHistory.save();
-                    } catch (error) {
-                        console.error("[MongoDB] Error: " + error)
-                    }
+                    console.info(`[WS] Got ${message.action} where ${info.from} sent ${info.value} DOGE to machine '${info.arcade_name}' (id: ${info.arcade_id})`)
+                    const arcadeHistory = new ArcadeHistory({ from: info.from, value: info.value, arcade_name: info.arcade_name, arcade_id: info.arcade_id, arcade_address: info.arcade_address, tx: info.tx, timestamp: info.timestamp })
+                    try { arcadeHistory.save() }
+                    catch (error) { console.error(`[DB] Error saving payment data for machine with ID ${info.arcade_id}: ${error}`) }
                     break;
                 case "play_game":
-                    const playHistory = new ArcadePlayHistory({ from: info.from, value: info.value, timestamp: info.timestamp, arcade_name: info.arcade_name, arcade_address: info.arcade_address })
-                    try {
-                        playHistory.save();
-                    } catch (error) {
-                        console.error("[MongoDB] Error: " + error)
-                    }
+                    const playHistory = new ArcadePlayHistory({ from: info.from, value: info.value, timestamp: info.timestamp, arcade_name: info.arcade_name, arcade_id: info.arcade_id, arcade_address: info.arcade_address })
+                    try { playHistory.save() }
+                    catch (error) { console.error(`[DB] Error saving play data for machine with ID ${info.arcade_id}: ${error}`) }
                     break;
                 case "leave":
                     // Add status to DB
-                    console.info(`[WS] Arcade machine '${info.arcade_name} has left.'`)
-                    Arcade.findOneAndUpdate({ address: info.arcade_address }, {
+                    console.info(`[WS] Arcade machine '${info.arcade_name}' (id: ${info.arcade_id}) has left.`)
+                    Arcade.findOneAndUpdate({ id: info.arcade_id }, {
                         status: {
                             online: false,
                             timestamp: info.timestamp
                         }
                     }, {})
-                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to offline at ${info.timestamp}`))
-                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
+                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' (id: ${info.arcade_id}) status to offline at ${info.timestamp}`))
+                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}' (id: ${info.arcade_id}). Error: ${err}`))
                     break;
                 case "join":
-                    console.info(`[WS] Arcade machine '${info.arcade_name}' has joined.`)
-                    Arcade.find({ address: info.arcade_address })
+                    console.info(`[WS] Arcade machine '${info.arcade_name}' (id: ${info.arcade_id}) has joined.`)
+                    // TODO: Send a new address to machine
+                    Arcade.find({ id: info.arcade_id })
                         .then(machines => {
-                            // Send cost data to machine
-                            console.info(`[WS] Sending infomation from DB to machine '${info.arcade_name}'`)
-                            var json = { action: "cost", data: { arcade_name: info.arcade_name, arcade_address: info.arcade_address, cost: machines[0].cost, name: machines[0].name } }
+                            // Send data from DB to machine
+                            console.info(`[WS] Sending info from DB to machine '${info.arcade_name}' (id: ${info.arcade_id})`)
+                            var json = { action: "database", data: { name: machines[0].name, id: info.arcade_id, cost: machines[0].cost } }
                             ws.send(JSON.stringify(json))
                         })
                         .catch(err => {
-                            console.info(`[WS] Error sending infomation from DB to machine '${info.arcade_name}.' Error: ${err}`)
-                            var json = { action: "cost", data: { arcade_name: info.arcade_name, arcade_address: info.arcade_address, cost: "Error", name: "Error" } }
+                            console.info(`[WS] Error sending info from DB to machine '${info.arcade_name}' (id: ${info.arcade_id}). Error: ${err}`)
+                            var json = { action: "database", data: { name: 'Error', id: info.arcade_id, cost: "Error" } }
                             ws.send(JSON.stringify(json))
                         });
                     // Add status to DB
@@ -183,8 +178,8 @@ wss.on("connection", (ws, req) => {
                             timestamp: info.timestamp
                         }
                     }, {})
-                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to online at ${info.timestamp}`))
-                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
+                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' (id: ${info.arcade_id}) status to online at ${info.timestamp}`))
+                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}' (id: ${info.arcade_id}). Error: ${err}`))
                     break;
                 default:
                     console.error("[WS] Unknown action: " + message.action)

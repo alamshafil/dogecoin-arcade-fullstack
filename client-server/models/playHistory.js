@@ -20,6 +20,10 @@ const ArcadePlayHistorySchema = new mongoose.Schema({
       type: String,
       required: true,
   },
+  arcade_id: {
+    type: String,
+    required: true,
+  },
   arcade_address: {
       type: String,
       required: true

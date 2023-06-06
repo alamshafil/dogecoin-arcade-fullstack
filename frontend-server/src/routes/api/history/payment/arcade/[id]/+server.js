@@ -5,12 +5,12 @@ import { json } from '@sveltejs/kit';
 
 export async function GET({ params, request }) {
     try {
-        var address = params.address
+        var id = params.id
 
         const dbConnection = await connectToDatabase()
         const db = dbConnection.db
         const collection = db.collection('arcade-history')
-        const arcadeHistory = await collection.find({ arcade_address: address }).toArray()
+        const arcadeHistory = await collection.find({ arcade_id: id }).toArray()
 
         return json({ arcadeHistory })
     } catch (err) {

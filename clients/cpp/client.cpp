@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Shafil Alam 
+// Copyright (c) 2022-2023 Shafil Alam 
 
 #include "wsclient.hpp"
 #include "wsclient.cpp"
@@ -16,24 +16,23 @@ static WebSocket::pointer ws = NULL;
 const std::string WEBSOCKET_PORT = "7000";
 
 // Config
-double arcade_cost = 5.0; // default value
-std::string arcade_name = "Arcade Test #2"; // default value
-std::string arcade_address = "mszsUNneHjsR4s7jqHkrVZBS8DY2PL1tPp";
+double arcade_cost = 5.0; // Default value
+std::string arcade_name = "Arcade Test #2"; // Default value
+std::string arcade_id = "arcade_test_2"; // This must unique
+std::string arcade_address = "momQpL2WzeQ97yHT4HaUVX4gByDomRQBnS"; // Fallback address
 
 // Game vars
 bool playing = false;
 double balance = 0.0;
 
-// Basic print function
-void print(std::string data) {
-    std::cout << data << "\n";
-}
+// Basic print marco
+#define print(data) std::cout << data << "\n";
 
 // Print config
 void print_config() {
     print("--- Arcade Info ---");
     print("Name: " + arcade_name);
-    print("Address: " + arcade_address);
+    print("Address (one-time): " + arcade_address);
     print("Cost: " + std::to_string(arcade_cost) + " DOGE");
     print("Send " + std::to_string(arcade_cost) + " DOGE to play game!");
 }
@@ -74,6 +73,7 @@ void handle_message(const std::string& message)
                     dataObj["value"] = value;
                     dataObj["timestamp"] = timestamp;
                     dataObj["arcade_name"] = arcade_name;
+                    dataObj["arcade_id"] = arcade_id;
                     dataObj["arcade_address"] = arcade_address;
                     historyObj["data"] = dataObj;
                     ws->send((std::string)historyObj);
@@ -86,6 +86,7 @@ void handle_message(const std::string& message)
                         dataObj["value"] = balance;
                         dataObj["timestamp"] = timestamp;
                         dataObj["arcade_name"] = arcade_name;
+                        dataObj["arcade_id"] = arcade_id;
                         dataObj["arcade_address"] = arcade_address;
                         playObj["data"] = dataObj;
                         ws->send((std::string)playObj);
@@ -95,11 +96,11 @@ void handle_message(const std::string& message)
             } else {
                 print("[Arcade] Warning! Paid " + value + " DOGE when game was running!");
             }
-        } else if(data["action"] == "cost") {
+        } else if(data["action"] == "database") {
             json::jobject jsonData = json::jobject::parse((std::string)data["data"]);
             if(jsonData["cost"] == "Error") {
-                print("--- WARNING: Failed to get price from database, make sure this machine is added. ---");
-            } else if(jsonData["arcade_address"] == arcade_address) {
+                print("--- WARNING: Failed to get data from database, make sure this machine is added. ---");
+            } else if(jsonData["id"] == arcade_id) {
                 print("--- Got price and name from DB ---");
                 arcade_cost = stod((std::string)jsonData["cost"]);
                 arcade_name = (std::string)jsonData["name"];
@@ -119,6 +120,7 @@ int main() {
     
     json:json::jobject data;
     data["arcade_name"] = arcade_name;
+    data["arcade_id"] = arcade_id;
     data["arcade_address"] = arcade_address;
     data["timestamp"] = std::time(nullptr);
     obj["data"] = data;

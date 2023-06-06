@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Shafil Alam
+// Copyright (c) 2022-2023 Shafil Alam
 
 import mongoose from 'mongoose';
 
@@ -13,12 +13,16 @@ const ArcadeHistorySchema = new mongoose.Schema({
     default: 0,
   },
   arcade_name: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
+  },
+  arcade_id: {
+    type: String,
+    required: true,
   },
   arcade_address: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   tx: {
     type: String,
@@ -28,7 +32,7 @@ const ArcadeHistorySchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-}, {collection : 'arcade-history'});
+}, { collection: 'arcade-history' });
 
 const ArcadeHistory = mongoose.model("ArcadeHistory", ArcadeHistorySchema);
 

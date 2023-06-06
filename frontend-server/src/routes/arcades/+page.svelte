@@ -18,9 +18,9 @@
     let filteredPlayHistory = [];
 
     let arcadeName;
-    let arcadeAddress;
     let arcadeCost;
     let arcadeID;
+    let arcadeDB; // Database ID
 
     let machineSearch = "";
     let historySearch = "";
@@ -45,21 +45,21 @@
 
     function setArcade(machine) {
         arcadeName = machine.name
-        arcadeAddress = machine.address
         arcadeCost = machine.cost
-        arcadeID = machine._id
+        arcadeID = machine.id
+        arcadeDB = machine._id
     }
 
     function clearModal() {
         arcadeName = ''
-        arcadeAddress = ''
         arcadeCost = ''
         arcadeID = ''
+        arcadeDB = ''
     }
 
     function parseTime(timestamp) {
         if(timestamp <= -1) return 'Never seen'
-        var date = new Date(timestamp*1000)
+        var date = new Date( timestamp * 1000 )
         return date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString("en-US")
     }
 
@@ -67,7 +67,7 @@
         try {
             const arcadeMachine = {
                 name: arcadeName,
-                address: arcadeAddress,
+                id: arcadeID,
                 cost: arcadeCost,
                 status: {
                     online: false,
@@ -90,9 +90,9 @@
         try {
             const arcadeMachine = {
                 name: arcadeName,
-                address: arcadeAddress,
                 cost: arcadeCost,
-                id: arcadeID
+                id: arcadeID,
+                dbID: arcadeDB,
             };
             await fetch("/api/arcades", {
                 method: "PUT",
@@ -114,14 +114,14 @@
 
     async function getHistory(machine) {
         setArcade(machine)
-        const res = await fetch("/api/history/payment/arcade/" + arcadeAddress);
+        const res = await fetch("/api/history/payment/arcade/" + arcadeID);
         const jsonRes = await res.json();
         arcadeHistory = jsonRes.arcadeHistory;
         getPlayHistory()
     }
 
     async function getPlayHistory() {
-        const res = await fetch("/api/history/play/arcade/" + arcadeAddress);
+        const res = await fetch("/api/history/play/arcade/" + arcadeID);
         const jsonRes = await res.json();
         playHistory = jsonRes.arcadeHistory;
     }
@@ -153,7 +153,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold">{machine.name}</h3>
-                        <div class="text-xs">Address: {machine.address}</div>
+                        <div class="text-xs">ID: {machine.id}</div>
                         <div class="text-xs">Cost: {machine.cost} DOGE</div>
                         <div class="text-xs">
                             <Circle text="{machine.status.online ? "Online" : "Offline"} ({parseTime(machine.status.timestamp)})" status={machine.status.online} />
@@ -186,8 +186,8 @@
             </div>
             <div class="form-control">
                 <label class="input-group">
-                <span>Address</span>
-                <input type="text" bind:value={arcadeAddress} autocomplete="off" class="input input-bordered w-full" />
+                <span>Unique ID</span>
+                <input type="text" bind:value={arcadeID} autocomplete="off" class="input input-bordered w-full" />
                 </label>
             </div>
             <div class="form-control">
@@ -220,8 +220,8 @@
             </div>
             <div class="form-control">
                 <label class="input-group">
-                <span>Address</span>
-                <input type="text" bind:value={arcadeAddress} autocomplete="off" class="input input-bordered w-full" />
+                <span>Unique ID</span>
+                <input type="text" bind:value={arcadeID} autocomplete="off" class="input input-bordered w-full" />
                 </label>
             </div>
             <div class="form-control">

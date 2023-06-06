@@ -8,9 +8,10 @@ from datetime import datetime
 WEBSOCKET_PORT = 7000
 
 # Config
-arcade_cost = 5.0 # default value
-arcade_name = "Arcade Test #1" # default value
-arcade_address = "momQpL2WzeQ97yHT4HaUVX4gByDomRQBnS"
+arcade_cost = 5.0 # Default value
+arcade_name = "Arcade Test #1" # Default value
+arcade_id = "arcade_test_1" # This must unique
+arcade_address = "momQpL2WzeQ97yHT4HaUVX4gByDomRQBnS" # Fallback address
 
 # Game vars
 playing = False
@@ -24,7 +25,8 @@ def print_config():
     # Print config
     print("--- Arcade Info ---")
     print("Name: " + arcade_name)
-    print("Address: " + arcade_address)
+    print("Unique ID: " + arcade_name)
+    print("Address (one-time): " + arcade_address)
     print("Cost: "+ str(arcade_cost) + " DOGE")
     print(f"Send {arcade_cost} DOGE to play game!")
 
@@ -64,6 +66,7 @@ def on_message(ws, message):
                                 "value": value,
                                 "timestamp": info['timestamp'],
                                 "arcade_name": arcade_name,
+                                "arcade_id": arcade_id,
                                 "arcade_address": arcade_address
                             }
                         }
@@ -78,6 +81,7 @@ def on_message(ws, message):
                                 "value": balance,
                                 "timestamp": info['timestamp'],
                                 "arcade_name": arcade_name,
+                                "arcade_id": arcade_id,
                                 "arcade_address": arcade_address
                             }
                         }
@@ -85,10 +89,10 @@ def on_message(ws, message):
                         play_game()
             else:
                 print(f"[Arcade] Warning! Paid {value} DOGE when game was running!")
-        elif data["action"] == "cost":
+        elif data["action"] == "database":
             if data["data"]["cost"] == "Error":
-                print("--- WARNING: Failed to get price from database, make sure this machine is added. ---")
-            elif data["data"]["arcade_address"] == arcade_address:
+                print("--- WARNING: Failed to get data from database, make sure this machine is added. ---")
+            elif data["data"]["id"] == arcade_id:
                 print("--- Got price and name from DB ---")
                 arcade_cost = float(data["data"]["cost"])
                 arcade_name = data["data"]["name"]
@@ -101,18 +105,18 @@ def on_error(ws, error):
 
 def on_close(ws, close_status_code, close_msg):
     print("--- Connection closed ---")
-    jsonClose = {"action": "leave", "data": {"arcade_name": arcade_name, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
+    jsonClose = {"action": "leave", "data": {"arcade_name": arcade_name, "arcade_id": arcade_id, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
     ws.send(json.dumps(jsonClose))
     exit(0)
 
 def on_open(ws):
     print("--- Opened connection ---")
-    jsonOpen = {"action": "join", "data": {"arcade_name": arcade_name, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
+    jsonOpen = {"action": "join", "data": {"arcade_name": arcade_name, "arcade_id": arcade_id, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
     ws.send(json.dumps(jsonOpen))
 
 def handle_close(ws):
     print("--- Connection closed ---")
-    jsonClose = {"action": "leave", "data": {"arcade_name": arcade_name, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
+    jsonClose = {"action": "leave", "data": {"arcade_name": arcade_name, "arcade_id": arcade_id, "arcade_address": arcade_address, "timestamp": int(datetime.now().timestamp())}}
     ws.send(json.dumps(jsonClose))
     rel.abort()
 

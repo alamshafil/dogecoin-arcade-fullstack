@@ -22,7 +22,7 @@
             <div class="stat-title">Total DOGE</div>
             {#if data.totalSum != undefined}
                 <div class="stat-value">{data.totalSum.sum} DOGE</div>
-                <div class="stat-desc">{data.totalSum.sum} DOGE = ${(price*data.totalSum.sum).toFixed(2)}</div>
+                <div class="stat-desc">{data.totalSum.sum} DOGE = ${(price * data.totalSum.sum).toFixed(2)}</div>
             {:else}
                 <div class="stat-value">0 DOGE</div>
                 <div class="stat-desc">0 DOGE = $0.00</div>
@@ -64,7 +64,7 @@
                             <img src="/img/arcade.png" alt="Arcade" />
                         </div>
                         <div>
-                            <h3 class="font-bold">{arcade._id}</h3>
+                            <h3 class="font-bold">ID: {arcade.id}</h3>
                         </div>
                     </div>
                     <div class="flex-none">
