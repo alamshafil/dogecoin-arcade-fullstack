@@ -25,7 +25,7 @@ def print_config():
     # Print config
     print("--- Arcade Info ---")
     print("Name: " + arcade_name)
-    print("Unique ID: " + arcade_name)
+    print("Unique ID: " + arcade_id)
     print("Address (one-time): " + arcade_address)
     print("Cost: "+ str(arcade_cost) + " DOGE")
     print(f"Send {arcade_cost} DOGE to play game!")

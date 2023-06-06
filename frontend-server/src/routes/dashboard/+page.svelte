@@ -64,7 +64,7 @@
                             <img src="/img/arcade.png" alt="Arcade" />
                         </div>
                         <div>
-                            <h3 class="font-bold">ID: {arcade.id}</h3>
+                            <h3 class="font-bold">{arcade._id}</h3>
                         </div>
                     </div>
                     <div class="flex-none">

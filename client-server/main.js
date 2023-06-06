@@ -61,7 +61,7 @@ if (process.env.MONOGODB_DATABASE_TYPE == 'memory') {
     console.info("[MongoDB/Server] Starting memory server...")
     const mongod = await MongoMemoryServer.create({
         instance: {
-            port: MONGODB_MEM_PORT
+            port: parseInt(MONGODB_MEM_PORT)
         }
     });
     mongodb_uri = mongod.getUri();
@@ -172,7 +172,7 @@ wss.on("connection", (ws, req) => {
                             ws.send(JSON.stringify(json))
                         });
                     // Add status to DB
-                    Arcade.findOneAndUpdate({ address: info.arcade_address }, {
+                    Arcade.findOneAndUpdate({ id: info.arcade_id }, {
                         status: {
                             online: true,
                             timestamp: info.timestamp

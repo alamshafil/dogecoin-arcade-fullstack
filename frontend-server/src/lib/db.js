@@ -1,24 +1,17 @@
 import { MongoClient } from 'mongodb'
+import { MONGODB_URI, MONGODB_DB } from '$env/static/private';
 
-const MONGODB_URI = 'mongodb://127.0.0.1:6000/'
-const MONGODB_DB = 'arcade'
+if (!MONGODB_URI) {
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env'
+  )
+}
 
-// TODO
-
-// const MONGODB_URI = process.env.MONGODB_URI
-// const MONGODB_DB = process.env.MONGODB_DB
-
-// if (!MONGODB_URI) {
-//   throw new Error(
-//     'Please define the MONGODB_URI environment variable inside .env.local'
-//   )
-// }
-
-// if (!MONGODB_DB) {
-//   throw new Error(
-//     'Please define the MONGODB_DB environment variable inside .env.local'
-//   )
-// }
+if (!MONGODB_DB) {
+  throw new Error(
+    'Please define the MONGODB_DB environment variable inside .env'
+  )
+}
 
 /**
  * Global is used here to maintain a cached connection across hot reloads

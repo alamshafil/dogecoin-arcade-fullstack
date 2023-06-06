@@ -5,8 +5,6 @@ import { json } from '@sveltejs/kit';
 
 export async function GET({ params, request }) {
     try {
-        var address = params.address
-
         const dbConnection = await connectToDatabase()
         const db = dbConnection.db
         const collection = db.collection('arcade-history')
