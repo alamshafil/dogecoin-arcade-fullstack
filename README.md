@@ -25,6 +25,11 @@ RPC_PASS='dogecoin'
 RPC_HOST='127.0.0.1'
 RPC_PORT='8000'
 RPC_PROTOCOL='http'
+
+USE_MEMPOOL_TX_ONLY=true
+MIN_TX_CONF=1
+
+VERBOSE_TX_LOG=true
 ```
 
 Change values accordingly in your `dogecoin.conf` and `.env`

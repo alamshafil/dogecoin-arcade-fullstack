@@ -85,21 +85,57 @@ db.once("open", function () {
     console.info(`[MongoDB/Connection] Connected to DB using URI ${mongodb_uri}...`);
 });
 
+// Logging config
+var verbose_tx_log = true;
+if (process.env.VERBOSE_TX_LOG == 'true') verbose_tx_log = true;
+else if (process.env.VERBOSE_TX_LOG == 'false') verbose_tx_log = false;
+else console.error("[env] Found invalid VERBOSE_TX_LOG setting. Defaulting to 'true' option.")
+
+// TX config
+var use_mempool_tx_only = true;
+if (process.env.USE_MEMPOOL_TX_ONLY == 'true') use_mempool_tx_only = true;
+else if (process.env.USE_MEMPOOL_TX_ONLY == 'false') use_mempool_tx_only = false;
+else console.error("[env] Found invalid USE_MEMPOOL_TX_ONLY setting. Defaulting to 'true' option.")
+
+console.info(`[env] use_mempool_tx_only = ${use_mempool_tx_only}`)
+
 // ZMQ
 sock.on('message', (topic, message) => {
-    // TODO: Check if mempool TX or inside of a block TX
-
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
         if (err) {
-            console.error("[RPC] Error parsing TX: " + err)
+            if (verbose_tx_log) console.error("[RPC] Error parsing TX: " + err)
             return; // Bail out
         }
 
         var tx = resp.result
 
-        // Check if the TX details includes both sent and receive
+        // Check if TX is miner reward
+        if (tx.generated != null && tx.generated) {
+            if (verbose_tx_log) console.error("[RPC] Found miner reward TX, skipping it.")
+            return; // Bail out
+        }
+
+        // Check if TX details includes both sent and receive
         if (tx.details.length <= 1) {
-            console.error("[RPC] Found TX but is not usable (tx.details.length <= 1)")
+            if (verbose_tx_log) console.error("[RPC] Found TX but is not usable. Could be node sent coins to external wallet.")
+            return; // Bail out
+        }
+
+        // Check if TX is orphaned
+        if (tx.confirmations <= -1) {
+            if (verbose_tx_log) console.error("[RPC] Found orphaned TX, skipping it.")
+            return; // Bail out
+        }
+
+        // Check if mempool TX
+        if (tx.confirmations == 0 && !use_mempool_tx_only) {
+            if (verbose_tx_log) console.info(`[RPC] Skpping TX ${tx.txid} because it is a mempool TX.`)
+            return; // Bail out
+        }
+
+        // Check if NOT mempool TX
+        if (tx.confirmations >= 1 && use_mempool_tx_only) {
+            if (verbose_tx_log) console.info(`[RPC] Skpping TX ${tx.txid} because it is NOT a mempool TX.`)
             return; // Bail out
         }
 
@@ -111,9 +147,9 @@ sock.on('message', (topic, message) => {
         console.info(`[ZMQ] Parsed TX ID: ${hash}`)
 
         // TODO: Filter TX for each client
+        console.info("[WS] Sending TX to all websocket clients...")
         wss.clients.forEach(function each(ws) {
             if (ws.isAlive === false) return ws.terminate()
-            console.info("[WS] Sending TX to all websocket clients...")
             var data = { action: "tx", data: { from, to, value, hash, timestamp } }
             ws.send(JSON.stringify(data))
         })
