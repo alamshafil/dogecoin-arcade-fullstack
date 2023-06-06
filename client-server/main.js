@@ -77,16 +77,30 @@ db.once("open", function () {
 
 // ZMQ
 sock.on('message', (topic, message) => {
+    // TODO: Check if mempool TX or inside of a block TX
+
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
-        if (err) console.error("[RPC] " + err)
+        if (err) {
+            console.error("[RPC] Error parsing TX: " + err)
+            return; // Bail out
+        }
+
         var tx = resp.result
+
+        // Check if the TX details includes both sent and receive
+        if (tx.details.length <= 1) {
+            console.error("[RPC] Found TX but is not usable (tx.details.length <= 1)")
+            return; // Bail out
+        }
+
         var hash = tx.txid
         var from = tx.details[0].address
         var to = tx.details[1].address
         var value = tx.details[1].amount
         var timestamp = tx.timereceived
-        console.info(`[ZMQ] Got TX ID: ${hash}`)
+        console.info(`[ZMQ] Parsed TX ID: ${hash}`)
 
+        // TODO: Filter TX for each client
         wss.clients.forEach(function each(ws) {
             if (ws.isAlive === false) return ws.terminate()
             console.info("[WS] Sending TX to all websocket clients...")

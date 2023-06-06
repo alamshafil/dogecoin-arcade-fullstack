@@ -10,7 +10,7 @@ WEBSOCKET_PORT = 7000
 # Config
 arcade_cost = 5.0 # default value
 arcade_name = "Arcade Test #1" # default value
-arcade_address = "mszsUNneHjsR4s7jqHkrVZBS8DY2PL1tPp"
+arcade_address = "momQpL2WzeQ97yHT4HaUVX4gByDomRQBnS"
 
 # Game vars
 playing = False
