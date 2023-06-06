@@ -7,8 +7,6 @@
     "dev": "concurrently -n \"backend,frontend\" -c \"bgBlue,bgGreen\" --kill-others \"npm run client-server\" \"npm run frontend-server-dev\""
   },
   "devDependencies": {
-    "concurrently": "^7.2.2",
-    "console-error": "^0.0.4",
-    "console-info": "^0.0.5"
+    "concurrently": "^7.2.2"
   }
 }
