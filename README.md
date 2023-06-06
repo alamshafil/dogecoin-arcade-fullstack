@@ -9,25 +9,24 @@ NOTE: The dev server runs the database in memory, so all data will be **LOST** w
 
 ### Starting up dogecoind
 
-The server by default use these values:
+Set up the client-server config by copying `env.sample` to `.env` and changing the values based on how `dogecoind` is setup.
 
+Here are the default ports:
 ```js
-// Ports
-const ZMQ_PORT = 9000
-const WEBSOCKET_PORT = 7000
-const MONGODB_PORT = 6000
+MONOGODB_DATABASE_TYPE=memory
 
-// Dogecoin RPC Config
-var rpc_config = {
-    protocol: 'http',
-    user: 'doge',
-    pass: 'dogecoin',
-    host: '127.0.0.1',
-    port: '8000',
-};
+ZMQ_PORT=9000
+WEBSOCKET_PORT=7000
+MONGODB_MEM_PORT=6000
+
+RPC_USER='doge'
+RPC_PASS='dogecoin'
+RPC_HOST='127.0.0.1'
+RPC_PORT='8000'
+RPC_PROTOCOL='http'
 ```
 
-Change values accordingly in your `dogecoin.conf`
+Change values accordingly in your `dogecoin.conf` and `.env`
 
 The setup below would be run like this (running in regtest):
 ```bash

@@ -1,5 +1,8 @@
 // Copyright (c) 2022 Shafil Alam
 
+// Import env file
+import 'dotenv/config'
+
 // MongoDB imports
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
@@ -18,61 +21,68 @@ import { WebSocketServer } from 'ws'
 import 'console-error'
 import 'console-info'
 
-// Ports
-const ZMQ_PORT = 9000
-const WEBSOCKET_PORT = 7000
-const MONGODB_PORT = 6000
+// Ports based on env 
+const ZMQ_PORT = process.env.ZMQ_PORT ?? 9000
+const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT ?? 7000
+const MONGODB_MEM_PORT = process.env.MONGODB_MEM_PORT ?? 6000
 
-// RPC Config
+// RPC Config based on env
 var rpc_config = {
-    protocol: 'http',
-    user: 'doge',
-    pass: 'dogecoin',
-    host: '127.0.0.1',
-    port: '8000',
+    protocol: process.env.RPC_PROTOCOL ?? 'http',
+    user: process.env.RPC_USER,
+    pass: process.env.RPC_PASS,
+    host: process.env.RPC_HOST ?? '127.0.0.1',
+    port: process.env.RPC_PORT ?? '25555',
 };
-
-// Set up MongoDB
-// This will create an new instance of "MongoMemoryServer" and automatically start it
-console.info("[MongoDB] Starting memory server...")
-const mongod = await MongoMemoryServer.create({
-    instance: {
-        port: MONGODB_PORT
-    }
-});
-
-const uri = mongod.getUri();
-console.info(`[MongoDB] URI: ${uri}`)
-
-// Set up WS
-const wss = new WebSocketServer({ port: WEBSOCKET_PORT })
-console.info(`[WS] Websocket server is running at port ${WEBSOCKET_PORT}...`)
 
 // Set up RPC
 var rpc = new RpcClient(rpc_config);
 
 // Check if RPC is up
 rpc.help(err => {
-    if (err) console.error("[RPC] " + err)
-    else console.info("[RPC] Connected to Doge RPC...")
+    if (err) console.error("[RPC] Failed to connect to Dogecoin RPC: " + err)
+    else console.info(`[RPC] Connected to Dogecoin RPC using ${rpc_config.host}:${rpc_config.port}...`)
 })
 
 // Set up ZMQ
 var sock = zmq.socket('sub')
 sock.connect(`tcp://127.0.0.1:${ZMQ_PORT}`);
 sock.subscribe('hashtx')
-console.info("[ZMQ] Connected to ZMQ...")
+console.info(`[ZMQ] Connected to ZMQ at port ${ZMQ_PORT}...`)
 
-// MongoDB
-// Connect to DB
-mongoose.connect(uri + 'arcade', { useNewUrlParser: true });
+// Set up WS
+const wss = new WebSocketServer({ port: WEBSOCKET_PORT })
+console.info(`[WS] Websocket server is running at port ${WEBSOCKET_PORT}...`)
+
+// Set up MongoDB server based on env
+var mongodb_uri = '';
+if (process.env.MONOGODB_DATABASE_TYPE == 'memory') {
+    // This will create an new instance of "MongoMemoryServer" and automatically start it
+    console.info("[MongoDB/Server] Starting memory server...")
+    const mongod = await MongoMemoryServer.create({
+        instance: {
+            port: MONGODB_MEM_PORT
+        }
+    });
+    mongodb_uri = mongod.getUri();
+    console.info(`[MongoDB/Server] Started memory server using port ${MONGODB_MEM_PORT}`)
+} else if (process.env.MONOGODB_DATABASE_TYPE == 'server') {
+    console.error('[MongoDB] Server option not supported yet...')
+    throw new Error('[MongoDB] Server option not supported yet...')
+} else {
+    console.error('[MongoDB] Invalid MONOGODB_DATABASE_TYPE found in config. Please check your .env file.')
+    throw new Error('[MongoDB] Invalid MONOGODB_DATABASE_TYPE found in config. Please check your .env file.')
+}
+
+// MongoDB connect to DB
+mongoose.connect(mongodb_uri + 'arcade', { useNewUrlParser: true });
 
 const db = mongoose.connection;
 
-db.on("error", console.error.bind(console, "Connection error: "));
+db.on("error", console.error.bind(console, "[MongoDB/Connection] Connection error: "));
 
 db.once("open", function () {
-    console.info("[MongoDB] Connected to DB...");
+    console.info(`[MongoDB/Connection] Connected to DB using URI ${mongodb_uri}...`);
 });
 
 // ZMQ
@@ -149,8 +159,8 @@ wss.on("connection", (ws, req) => {
                             timestamp: info.timestamp
                         }
                     }, {})
-                    .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to offline at ${info.timestamp}`))
-                    .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
+                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to offline at ${info.timestamp}`))
+                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
                     break;
                 case "join":
                     console.info(`[WS] Arcade machine '${info.arcade_name}' has joined.`)
@@ -173,8 +183,8 @@ wss.on("connection", (ws, req) => {
                             timestamp: info.timestamp
                         }
                     }, {})
-                    .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to online at ${info.timestamp}`))
-                    .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
+                        .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' status to online at ${info.timestamp}`))
+                        .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}.' Error: ${err}`))
                     break;
                 default:
                     console.error("[WS] Unknown action: " + message.action)
