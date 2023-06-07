@@ -1,6 +1,6 @@
 {
-  "name": "frontend-server",
-  "version": "0.0.1",
+  "name": "dogecoin-arcade-frontend-server",
+  "version": "1.0.0-testing",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",

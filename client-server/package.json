@@ -1,7 +1,7 @@
 {
-  "name": "client-server",
-  "version": "1.0.0",
-  "description": "Server for Dogecoin Arcade",
+  "name": "dogecoin-arcade-client-server",
+  "version": "1.0.0-testing",
+  "description": "Backend server for Dogecoin Arcade",
   "main": "main.js",
   "type": "module",
   "scripts": {

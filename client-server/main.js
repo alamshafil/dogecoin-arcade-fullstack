@@ -21,6 +21,9 @@ import { WebSocketServer } from 'ws'
 import 'console-error'
 import 'console-info'
 
+// Startup log
+console.info(`Running dogecoin-arcade-client-server`)
+
 // Ports based on env 
 const ZMQ_PORT = process.env.ZMQ_PORT ?? 9000
 const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT ?? 7000
