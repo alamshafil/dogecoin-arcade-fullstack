@@ -32,9 +32,12 @@ double balance = 0.0;
 void print_config() {
     print("--- Arcade Info ---");
     print("Name: " + arcade_name);
-    print("Address (one-time): " + arcade_address);
     print("Cost: " + std::to_string(arcade_cost) + " DOGE");
     print("Send " + std::to_string(arcade_cost) + " DOGE to play game!");
+}
+
+void show_addr() {
+    print("Send to this one time address: " + arcade_address)   
 }
 
 // Play game
@@ -91,12 +94,30 @@ void handle_message(const std::string& message)
                         playObj["data"] = dataObj;
                         ws->send((std::string)playObj);
                         play_game();
+                        // Ask for new address
+                        json::jobject askObj;
+                        askObj["action"] = "askaddr";
+                        json::jobject askData;
+                        askData["arcade_name"] = arcade_name;
+                        askData["arcade_id"] = arcade_id;
+                        askObj["data"] = dataObj;
+                        ws->send((std::string)askObj);
                     }
                 }
             } else {
                 print("[Arcade] Warning! Paid " + value + " DOGE when game was running!");
             }
-        } else if(data["action"] == "database") {
+        }
+        if(data["action"] == "address") {
+            json::jobject jsonData = json::jobject::parse((std::string)data["data"]);
+            if(jsonData["new_addr"] == "Error") {
+                print("--- WARNING: Failed to get a new address, using fallback address. ---")
+            } else {
+                arcade_address = (std::string)jsonData["new_addr"];
+                show_addr();
+            }
+        }
+        if(data["action"] == "database") {
             json::jobject jsonData = json::jobject::parse((std::string)data["data"]);
             if(jsonData["cost"] == "Error") {
                 print("--- WARNING: Failed to get data from database, make sure this machine is added. ---");

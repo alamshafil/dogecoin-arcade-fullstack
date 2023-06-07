@@ -158,6 +158,20 @@ sock.on('message', (topic, message) => {
     })
 })
 
+// Function to get new address
+function getNewAddress() {
+    return new Promise((resolve, reject) => {
+        rpc.getNewAddress("", (err, resp) => {
+            if (err) {
+                console.error("[RPC] Error getting new address: " + err)
+                resolve("Error")
+            }
+
+            resolve(resp.result)
+        })
+    });
+}
+
 // WS
 wss.on("connection", (ws, req) => {
     console.info(`[WS] ${req.socket.remoteAddress} has connected...`);
@@ -196,7 +210,12 @@ wss.on("connection", (ws, req) => {
                     break;
                 case "join":
                     console.info(`[WS] Arcade machine '${info.arcade_name}' (id: ${info.arcade_id}) has joined.`)
-                    // TODO: Send a new address to machine
+                    getNewAddress().then(addr => {
+                        // Send new address to machine
+                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id})`)
+                        var json = { action: "address", data: { new_addr: addr } }
+                        ws.send(JSON.stringify(json))
+                    })
                     Arcade.find({ id: info.arcade_id })
                         .then(machines => {
                             // Send data from DB to machine
@@ -218,6 +237,15 @@ wss.on("connection", (ws, req) => {
                     }, {})
                         .then(docs => console.info(`[DB] Saved machine '${info.arcade_name}' (id: ${info.arcade_id}) status to online at ${info.timestamp}`))
                         .catch(err => console.error(`[DB] Failed to update status for '${info.arcade_name}' (id: ${info.arcade_id}). Error: ${err}`))
+                    break;
+                case "askaddr":
+                    console.info(`[WS] '${info.arcade_name}' (id: ${info.arcade_id}) asked for a new address.`)
+                    getNewAddress().then(addr => {
+                        // Send new address to machine
+                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id})`)
+                        var json = { action: "address", data: { new_addr: addr } }
+                        ws.send(JSON.stringify(json))
+                    })
                     break;
                 default:
                     console.error("[WS] Unknown action: " + message.action)

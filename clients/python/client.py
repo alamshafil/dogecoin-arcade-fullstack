@@ -26,9 +26,11 @@ def print_config():
     print("--- Arcade Info ---")
     print("Name: " + arcade_name)
     print("Unique ID: " + arcade_id)
-    print("Address (one-time): " + arcade_address)
     print("Cost: "+ str(arcade_cost) + " DOGE")
     print(f"Send {arcade_cost} DOGE to play game!")
+
+def show_addr():
+    print("Send to this one time address: " + arcade_address)
 
 def play_game():
     global balance, playing
@@ -40,7 +42,7 @@ def play_game():
     print(f"Send {arcade_cost} DOGE to play game!")
 
 def on_message(ws, message):
-    global balance, playing, arcade_cost, arcade_name
+    global balance, playing, arcade_cost, arcade_name, arcade_address
     data = json.loads(message)
 
     if data["action"] != None:
@@ -87,9 +89,24 @@ def on_message(ws, message):
                         }
                         ws.send(json.dumps(jsonHistory))
                         play_game()
+                        # Once game is done, ask for new address
+                        jsonAddr = {
+                            "action": "askaddr", 
+                            "data": {
+                                "arcade_name": arcade_name,
+                                "arcade_id": arcade_id,
+                            }
+                        }
+                        ws.send(json.dumps(jsonAddr))
             else:
                 print(f"[Arcade] Warning! Paid {value} DOGE when game was running!")
-        elif data["action"] == "database":
+        if data["action"] == "address":
+            if data["data"]["new_addr"] == "Error":
+                print("--- WARNING: Failed to get a new address, using fallback address. ---")
+            else:
+                arcade_address = data["data"]["new_addr"]
+                show_addr()
+        if data["action"] == "database":
             if data["data"]["cost"] == "Error":
                 print("--- WARNING: Failed to get data from database, make sure this machine is added. ---")
             elif data["data"]["id"] == arcade_id:
