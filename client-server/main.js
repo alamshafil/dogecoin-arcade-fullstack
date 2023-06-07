@@ -56,7 +56,9 @@ console.info(`[WS] Websocket server is running at port ${WEBSOCKET_PORT}...`)
 
 // Set up MongoDB server based on env
 var mongodb_uri = '';
+var mongodb_db = '';
 if (process.env.MONOGODB_DATABASE_TYPE == 'memory') {
+    mongodb_db = 'arcade' // Default DB
     // This will create an new instance of "MongoMemoryServer" and automatically start it
     console.info("[MongoDB/Server] Starting memory server...")
     const mongod = await MongoMemoryServer.create({
@@ -67,19 +69,19 @@ if (process.env.MONOGODB_DATABASE_TYPE == 'memory') {
     mongodb_uri = mongod.getUri();
     console.info(`[MongoDB/Server] Started memory server using port ${MONGODB_MEM_PORT}`)
 } else if (process.env.MONOGODB_DATABASE_TYPE == 'server') {
-    console.error('[MongoDB] Server option not supported yet...')
-    throw new Error('[MongoDB] Server option not supported yet...')
+    mongodb_uri = process.env.MONGODB_URI;
+    mongodb_db = process.env.MONGODB_DB;
 } else {
     console.error('[MongoDB] Invalid MONOGODB_DATABASE_TYPE found in config. Please check your .env file.')
     throw new Error('[MongoDB] Invalid MONOGODB_DATABASE_TYPE found in config. Please check your .env file.')
 }
 
 // MongoDB connect to DB
-mongoose.connect(mongodb_uri + 'arcade', { useNewUrlParser: true });
+mongoose.connect(mongodb_uri + mongodb_db, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 
-db.on("error", console.error.bind(console, "[MongoDB/Connection] Connection error: "));
+db.on("error", console.error.bind(console, "[MongoDB/Connection] Connection error:"));
 
 db.once("open", function () {
     console.info(`[MongoDB/Connection] Connected to DB using URI ${mongodb_uri}...`);

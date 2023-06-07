@@ -15,6 +15,9 @@ Set up the client-server config by copying `client-server/env.sample` to `client
 Here are the default values:
 ```
 MONOGODB_DATABASE_TYPE=memory
+# If using server above, then you need to set the below settings
+MONGODB_URI=mongodb://127.0.0.1:6000/
+MONGODB_DB=arcade
 
 ZMQ_PORT=9000
 WEBSOCKET_PORT=7000
@@ -31,6 +34,7 @@ MIN_TX_CONF=1
 
 VERBOSE_TX_LOG=true
 ```
+
 
 Change values accordingly in your `dogecoin.conf` and `.env`
 
