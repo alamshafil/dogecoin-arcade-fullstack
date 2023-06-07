@@ -146,18 +146,16 @@
     </div>
     <div class="flex flex-col space-y-4">
         {#each filteredMachines as machine}
-            <div class="alert shadow-lg">
+            <div class="w-100 shadow-lg alert">
+                <div class="w-20 ml-4">
+                    <img src="/img/arcade.png" alt="Arcade" />
+                </div>
                 <div>
-                    <div class="w-20 ml-4">
-                        <img src="/img/arcade.png" alt="Arcade" />
-                    </div>
-                    <div>
-                        <h3 class="font-bold">{machine.name}</h3>
-                        <div class="text-xs">ID: {machine.id}</div>
-                        <div class="text-xs">Cost: {machine.cost} DOGE</div>
-                        <div class="text-xs">
-                            <Circle text="{machine.status.online ? "Online" : "Offline"} ({parseTime(machine.status.timestamp)})" status={machine.status.online} />
-                        </div>
+                    <h3 class="font-bold">{machine.name}</h3>
+                    <div class="text-xs">ID: {machine.id}</div>
+                    <div class="text-xs">Cost: {machine.cost} DOGE</div>
+                    <div class="text-xs">
+                        <Circle text="{machine.status.online ? "Online" : "Offline"} ({parseTime(machine.status.timestamp)})" status={machine.status.online} />
                     </div>
                 </div>
                 <div class="flex-none">
