@@ -27,7 +27,7 @@
 
     $: filteredMachines = data.arcadeMachines.filter((machine) => {
         return machine.name.toLowerCase().includes(machineSearch.toLowerCase()) 
-        || machine.address.includes(machineSearch)
+        || machine.id.includes(machineSearch)
         || machine.cost.toString().includes(machineSearch)
     })
 

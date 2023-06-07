@@ -52,7 +52,6 @@ export async function PUT({ params, request }) {
         await collection.updateOne({ _id: ObjectId(machine.dbID) }, {
             $set: {
                 name: machine.name,
-                address: machine.address,
                 cost: machine.cost,
                 id: machine.id,
             }
@@ -70,5 +69,6 @@ export async function PUT({ params, request }) {
     }
 }
 
+// TODO
 export async function DELETE({ params, request }) {
 }
