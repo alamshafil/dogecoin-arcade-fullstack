@@ -1,11 +1,10 @@
 # Dogecoin Arcade Full-stack
 
-NOTE: This is a **work-in-progress** and not ready for PRODUCTION!
-Repo subject to **CHANGE**!
+NOTE: This is a **work-in-progress** and not for **PRODUCTION**! This is only a proof of concept purely for testing. It is highly discouraged to use this in a production manner because of security and efficiency issues. 
 
 ## How to run
 
-NOTE: The dev server runs the database in memory, so all data will be **LOST** when server is restarted.
+NOTE: The dev server runs the database in memory, so all data will be **LOST** when server is restarted. Update .env files to use a different MongoDB server.
 
 ### Setting up config files
 #### Setting up client-server and dogecoind
@@ -40,7 +39,7 @@ Change values accordingly in your `dogecoin.conf` and `.env`
 
 The setup below would be run like this (running in regtest):
 ```bash
-$ dogecoind -regtest -server=1 -rpcport=8000 -rpcuser=doge -rpcpassword=dogecoin -zmqpubhashtx=tcp://127.0.0.1:9000
+$ dogecoind -regtest -server=1 -rpcport=8000 -rpcuser=doge -rpcpassword=dogecoin -zmqpubhashtx=tcp://127.0.0.1:9000 -rpcworkqueue=100
 ```
 
 #### Setting up frontend server
