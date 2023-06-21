@@ -104,12 +104,24 @@ else console.error("[env] Found invalid USE_MEMPOOL_TX_ONLY setting. Defaulting 
 
 console.info(`[env] use_mempool_tx_only = ${use_mempool_tx_only}`)
 
+// Show stats
+var err_count = 0;
+if (verbose_tx_log) {
+    setInterval(() => {
+        console.info(`[stats/1m] Found ${err_count} invalid or non-wallet TXs.`)
+    }, 60000) // 1 min
+}
+
 // ZMQ
 sock.on('message', (topic, message) => {
     if (topic != 'hashtx') return;
+
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
         if (err) {
-            if (verbose_tx_log) console.error("[RPC] Error parsing TX, likely this TX is not important to us. Error: " + err.message)
+            if (verbose_tx_log) {
+                err_count++;
+                console.error(`[RPC] (#${err_count}) Error parsing TX. Error: ${err.message}`)
+            }
             return; // Bail out
         }
 
