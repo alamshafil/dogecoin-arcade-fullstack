@@ -3,6 +3,21 @@
 // Import env file
 import 'dotenv/config'
 
+// Import bitcoin-js
+import bitcoinjs from 'bitcoinjs-lib'
+
+// Setup dogecoin network
+const dogecoin_network = {
+    messagePrefix: '\x19Dogecoin Signed Message:\n',
+    bip32: {
+        public: 0x02facafd,
+        private: 0x02fac398
+    },
+    pubKeyHash: 0x1e,
+    scriptHash: 0x16,
+    wif: 0x9e
+}
+
 // MongoDB imports
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
@@ -50,7 +65,7 @@ rpc.help(err => {
 // Set up ZMQ
 var sock = zmq.socket('sub')
 sock.connect(`tcp://127.0.0.1:${ZMQ_PORT}`);
-sock.subscribe('hashtx')
+sock.subscribe('rawtx')
 console.info(`[ZMQ] Connected to ZMQ at port ${ZMQ_PORT}...`)
 
 // Set up WS
@@ -104,24 +119,37 @@ else console.error("[env] Found invalid USE_MEMPOOL_TX_ONLY setting. Defaulting 
 
 console.info(`[env] use_mempool_tx_only = ${use_mempool_tx_only}`)
 
-// Show stats
-var err_count = 0;
-if (verbose_tx_log) {
-    setInterval(() => {
-        console.info(`[stats/1m] Found ${err_count} invalid or non-wallet TXs.`)
-    }, 60000) // 1 min
-}
+// Cache config
+var use_cache_addresses_only = true;
+if (process.env.USE_CACHE_ADDRESSES_ONLY == 'true') use_cache_addresses_only = true;
+else if (process.env.USE_CACHE_ADDRESSES_ONLY == 'false') use_cache_addresses_only = false;
+else console.error("[env] Found invalid USE_CACHE_ADDRESSES_ONLY setting. Defaulting to 'true' option.")
+
+// TODO: Remove unused address
+// Global cache to hold arcade addresses
+var arcade_addresses_cache = [];
 
 // ZMQ
 sock.on('message', (topic, message) => {
-    if (topic != 'hashtx') return;
+    if (topic != 'rawtx') return;
 
-    rpc.getTransaction(message.toString('hex'), (err, resp) => {
+    const rawtx = message.toString('hex')
+    const tx = bitcoinjs.Transaction.fromHex(rawtx)
+    const hash = tx.getId()
+
+    if (use_cache_addresses_only) {
+        let address = '';
+        try { address = bitcoinjs.address.fromOutputScript(tx.outs[1].script, dogecoin_network); }
+        catch (err) { console.error(`[TX] Error parsing TX. Error: ${err}`) }
+        if (!arcade_addresses_cache.includes(address)) {
+            if (verbose_tx_log) console.error("[TX] Found TX not sent to any arcade machines based on cached addresses.")
+            return; // Bail out
+        }
+    }
+
+    rpc.getTransaction(hash, (err, resp) => {
         if (err) {
-            if (verbose_tx_log) {
-                err_count++;
-                console.error(`[RPC] (#${err_count}) Error parsing TX. Error: ${err.message}`)
-            }
+            if (verbose_tx_log) console.error(`[RPC] Error parsing TX. Error: ${err.message}`)
             return; // Bail out
         }
 
@@ -179,7 +207,7 @@ function getNewAddress() {
     return new Promise((resolve, reject) => {
         rpc.getNewAddress("", (err, resp) => {
             if (err) {
-                console.error("[RPC] Error getting new address: " + err)
+                console.error("[RPC] Error getting new address: " + err.message)
                 resolve("Error")
             }
 
@@ -228,7 +256,8 @@ wss.on("connection", (ws, req) => {
                     console.info(`[WS] Arcade machine '${info.arcade_name}' (id: ${info.arcade_id}) has joined.`)
                     getNewAddress().then(addr => {
                         // Send new address to machine
-                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id})`)
+                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id}) cache=${use_cache_addresses_only}`)
+                        arcade_addresses_cache.push(addr)
                         var json = { action: "address", data: { new_addr: addr } }
                         ws.send(JSON.stringify(json))
                     })
@@ -258,7 +287,8 @@ wss.on("connection", (ws, req) => {
                     console.info(`[WS] '${info.arcade_name}' (id: ${info.arcade_id}) asked for a new address.`)
                     getNewAddress().then(addr => {
                         // Send new address to machine
-                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id})`)
+                        console.info(`[WS] Sending new address to '${info.arcade_name}' (id: ${info.arcade_id}) cache=${use_cache_addresses_only}`)
+                        arcade_addresses_cache.push(addr)
                         var json = { action: "address", data: { new_addr: addr } }
                         ws.send(JSON.stringify(json))
                     })

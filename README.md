@@ -32,6 +32,8 @@ USE_MEMPOOL_TX_ONLY=true
 MIN_TX_CONF=1
 
 VERBOSE_TX_LOG=false
+
+USE_CACHE_ADDRESSES_ONLY=true
 ```
 
 
@@ -39,7 +41,7 @@ Change values accordingly in your `dogecoin.conf` and `.env`
 
 The setup below would be run like this (running in regtest):
 ```bash
-$ dogecoind -regtest -server=1 -rpcport=8000 -rpcuser=doge -rpcpassword=dogecoin -zmqpubhashtx=tcp://127.0.0.1:9000 -rpcworkqueue=100
+$ dogecoind -regtest -server=1 -rpcport=8000 -rpcuser=doge -rpcpassword=dogecoin -zmqpubrawtx=tcp://127.0.0.1:9000
 ```
 
 #### Setting up frontend server
