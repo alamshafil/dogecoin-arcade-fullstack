@@ -106,6 +106,7 @@ console.info(`[env] use_mempool_tx_only = ${use_mempool_tx_only}`)
 
 // ZMQ
 sock.on('message', (topic, message) => {
+    if (topic != 'hashtx') return;
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
         if (err) {
             if (verbose_tx_log) console.error("[RPC] Error parsing TX, likely this TX is not important to us. Error: " + err.message)
