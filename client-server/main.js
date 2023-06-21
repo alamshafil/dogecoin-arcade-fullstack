@@ -43,7 +43,7 @@ var rpc = new RpcClient(rpc_config);
 
 // Check if RPC is up
 rpc.help(err => {
-    if (err) console.error("[RPC] Failed to connect to Dogecoin RPC: " + err)
+    if (err) console.error("[RPC] Failed to connect to Dogecoin RPC: " + err.message)
     else console.info(`[RPC] Connected to Dogecoin RPC using ${rpc_config.host}:${rpc_config.port}...`)
 })
 
@@ -108,7 +108,7 @@ console.info(`[env] use_mempool_tx_only = ${use_mempool_tx_only}`)
 sock.on('message', (topic, message) => {
     rpc.getTransaction(message.toString('hex'), (err, resp) => {
         if (err) {
-            if (verbose_tx_log) console.error("[RPC] Error parsing TX: " + err)
+            if (verbose_tx_log) console.error("[RPC] Error parsing TX, likely this TX is not important to us. Error: " + err.message)
             return; // Bail out
         }
 
